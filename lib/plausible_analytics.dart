@@ -29,8 +29,8 @@ class Plausible {
     } else if (Platform.isIOS) {
       var iosInfo = await DeviceInfoPlugin().iosInfo;
       var systemName = iosInfo.systemName;
-      var version = iosInfo.systemVersion;
-      version = "$systemName $version; ${iosInfo.identifierForVendor};";
+      var systemVersion = iosInfo.systemVersion;
+      version = "$systemName $systemVersion; ${iosInfo.identifierForVendor};";
     }
     version += Platform.operatingSystemVersion.replaceAll('"', '');
     userAgent = "Mozilla/5.0 ($version; rv:53.0) Gecko/20100101 Chrome/53.0";
