@@ -17,6 +17,25 @@ class Plausible {
   Plausible(this.serverUrl, this.domain,
       {this.userAgent = "", this.screenWidth = ""});
 
+  /// Generates a User Agent for the current device and saves it in the userAgent Attribute
+  Future<void> generateUserAgentString() async {
+    String version = "";
+    //increasing the number of unique data points in the User-Agent string gives plausible a better chance of identifying unique users
+    // as the uniqueness gets determined by the hash of the user agent and ip address (https://plausible.io/data-policy)
+    if (Platform.isAndroid) {
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      var release = androidInfo.version.release;
+      version = "Android $release; ${androidInfo.fingerprint};";
+    } else if (Platform.isIOS) {
+      var iosInfo = await DeviceInfoPlugin().iosInfo;
+      var systemName = iosInfo.systemName;
+      var version = iosInfo.systemVersion;
+      version = "$systemName $version; ${iosInfo.identifierForVendor};";
+    }
+    version += Platform.operatingSystemVersion.replaceAll('"', '');
+    userAgent = "Mozilla/5.0 ($version; rv:53.0) Gecko/20100101 Chrome/53.0";
+  }
+
   /// Post event to plausible
   Future<int> event(
       {String name = "pageview",
@@ -36,24 +55,8 @@ class Plausible {
     page = "app://localhost/" + page;
     referrer = "app://localhost/" + referrer;
 
-
     if (userAgent == "") {
-      // Get and set device infos
-      String version = "";
-
-      if (Platform.isAndroid) {
-        var androidInfo = await DeviceInfoPlugin().androidInfo;
-        var release = androidInfo.version.release;
-        version = "Android $release";
-      } else if (Platform.isIOS) {
-        var iosInfo = await DeviceInfoPlugin().iosInfo;
-        var systemName = iosInfo.systemName;
-        var version = iosInfo.systemVersion;
-        version = "$systemName $version";
-      } else {
-        version = Platform.operatingSystemVersion.replaceAll('"', '');
-      }
-      userAgent = "Mozilla/5.0 ($version; rv:53.0) Gecko/20100101 Chrome/53.0";
+      await generateUserAgentString();
     }
 
     // Http Post request see https://plausible.io/docs/events-api
