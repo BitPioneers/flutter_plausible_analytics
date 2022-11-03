@@ -15,24 +15,26 @@ class Plausible {
 
   /// Constructor
   Plausible(this.serverUrl, this.domain,
-      {this.userAgent = "", this.screenWidth = ""}){
-          final plugin = DeviceInfoPlugin();
-          if(Platform.isAndroid){
-            plugin.androidInfo.then((value) {
-              sendDeviceInfo(value.model ?? "unidentifiable android (probably a problem with device_info_plus)");
-            });
-          }else if(Platform.isIOS) {
-            plugin.iosInfo.then((value) {
-              sendDeviceInfo(value.utsname.machine ?? "unidentifiable ios (probably a problem with device_info_plus)" );
-            });
-          }else {
-            sendDeviceInfo("Not IOS nor Android device");
-          }
-      }
-    
+      {this.userAgent = "", this.screenWidth = ""}) {
+    final plugin = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      plugin.androidInfo.then((value) {
+        sendDeviceInfo(value.model ??
+            "unidentifiable android (probably a problem with device_info_plus)");
+      });
+    } else if (Platform.isIOS) {
+      plugin.iosInfo.then((value) {
+        sendDeviceInfo(value.utsname.machine ??
+            "unidentifiable ios (probably a problem with device_info_plus)");
+      });
+    } else {
+      sendDeviceInfo("Not IOS nor Android device");
+    }
+  }
+
   /// Sends a custom event called "device_info" with the device model as a prop. Remember to add "device_info" to your events for this to work
   Future<void> sendDeviceInfo(String deviceModel) async {
-      event(name: "device_info", page:"", props:  {"model" : deviceModel} );
+    event(name: "device_info", page: "", props: {"model": deviceModel});
   }
 
   /// Generates a User Agent for the current device and saves it in the userAgent Attribute
