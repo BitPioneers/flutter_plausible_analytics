@@ -11,8 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  universal_io: ^2.0.4
-  device_info_plus: ^8.0.0
+  universal_io: ^2.2.2
+  device_info_plus: ^10.1.1
 
 
 dev_dependencies:
